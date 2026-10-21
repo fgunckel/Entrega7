@@ -1,0 +1,56 @@
+{
+  "job_id": "6d59dae8ed6b4661bb768c3c01fc7344",
+  "status": "DONE",
+  "user_request": "Decidir si una API .NET debe ser monolito modular o microservicios",
+  "created_at": 1792616932.7642484,
+  "updated_at": 1792616964.9342027,
+  "hitl_reason": null,
+  "error": null,
+  "result": {
+    "status": "complete",
+    "executive_summary": "Decisión sobre: Decidir si una API .NET debe ser monolito modular o microservicios. Se evaluaron 3 alternativas con criterios ponderados; evidencia recuperada del corpus local (5 fuentes).",
+    "recommendation": "Recomendación: 'Microservicios' (puntaje ponderado 0.630).",
+    "alternatives_considered": [
+      "Monolito",
+      "Monolito modular",
+      "Microservicios"
+    ],
+    "evidence_ids": [
+      "doc-microservices-1",
+      "doc-microservices-tradeoffs",
+      "doc-modular-monolith-01",
+      "doc-modular-monolith-2",
+      "doc-operational-tradeoffs"
+    ],
+    "assumptions": [
+      "Criterio 'dev-speed' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'operational-cost' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'independent-deploys' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'scalability' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'team-alignment' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'dev-speed' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'operational-cost' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'independent-deploys' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'scalability' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'team-alignment' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'dev-speed' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'operational-cost' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'scalability' sin evidencia directa: estimación sujeta a revisión.",
+      "Criterio 'team-alignment' sin evidencia directa: estimación sujeta a revisión."
+    ],
+    "risks_and_limitations": [
+      "La evidencia proviene exclusivamente del corpus local versionado."
+    ],
+    "validation_warnings": []
+  },
+  "usage": {
+    "tokens_available": true,
+    "input_tokens": 1347,
+    "output_tokens": 254,
+    "total_tokens": 1601,
+    "llm_calls": 3,
+    "model": "openai/gpt-oss-120b",
+    "estimated_cost_usd": 0.000393,
+    "cost_note": "Costo estimado con tarifas configurables (ADA_MODEL_RATES); verificar vigencia en la página de precios del proveedor"
+  }
+}

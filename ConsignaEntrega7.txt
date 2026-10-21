@@ -1,0 +1,58 @@
+Actividad
+
+Pre-entrega 7: API de producción y monitoreo activo
+Qué construir
+Debes entregar el código fuente de una API REST (FastAPI) que exponga tu sistema multi-agente desarrollado en el Módulo 6, con las siguientes capacidades nuevas:
+
+Endpoints Asíncronos: La API no debe bloquearse. Debe recibir la tarea, encolarla y devolver un ID.
+Gestión de Estado con Redis: Uso de Redis para persistir el estado de los trabajos y los checkpoints de LangGraph.
+Capa de Observabilidad: Integración activa de instrumentación para enviar trazas de cada ejecución a una plataforma de monitoreo.
+Flujo Human-in-the-loop (HITL): Implementación de una pausa obligatoria para aprobación humana en tareas que el sistema identifique como "críticas" (ej. ejecución de una herramienta con efectos secundarios o costo muy alto).
+Prueba de carga y evidencia de costos: enviá 5 peticiones concurrentes contra la API y capturá del dashboard de monitoreo (Phoenix o LangSmith) dos métricas de esa corrida: el costo por ejecución —que la plataforma calcula sola a partir de los tokens de entrada y salida— y la latencia p95. Las capturas van en /screenshots junto con las de trazas.
+Pasos Sugeridos
+Refactorización del Grafo: Toma tu orquestador multi-agente del Módulo 6 y asegúrate de que use un RedisSaver o similar para persistir el estado. Define un punto de interrupción en una arista o nodo crítico.
+Wrappers de Observabilidad: Configura las variables de entorno para LangSmith o inicializa el colector de Arize Phoenix mediante OpenInference. Asegúrate de decorar tus funciones de llamada a LLM.
+Arquitectura de la API: Crea la aplicación FastAPI. Implementa el patrón de "Worker" (puede ser un thread asíncrono simple en esta etapa o un proceso separado con Celery/Arq si buscas excelencia).
+Lectura del dashboard: con las 5 peticiones concurrentes ya lanzadas (punto 5 de "Qué construir"), revisá en Phoenix o LangSmith cómo se comportan las trazas, dónde se concentra la latencia y qué nodo del grafo consume más tokens. Esa lectura es la que sostiene tus capturas.
+Errores comunes a evitar
+Bloquear el Event Loop: Evita hacer llamadas sync a bases de datos o LLMs dentro de los endpoints de FastAPI sin usar run_in_threadpool o async nativo. Esto matará el rendimiento.
+Ignorar el manejo de errores en Background Tasks: Si el agente falla en segundo plano, el sistema debe capturar la excepción y actualizar el estado en Redis a FAILED, de lo contrario, el cliente se quedará esperando en un loop infinito de polling.
+📦 Qué entregás y en qué formato
+
+Tipo: 💻 Código — un repositorio de GitHub.
+Artefacto concreto: repo con la API FastAPI asíncrona, Redis para el estado, observabilidad (LangSmith o Arize Phoenix), el nodo Human-in-the-loop, el archivo de requerimientos, Docker Compose (opcional) y capturas del dashboard de trazas.
+Qué NO hace falta: no hay documento; las capturas del dashboard son evidencia de las trazas, no un informe.
+🗂️ Así se ve el repo esperado (estructura de referencia)
+Tomalo de molde y adaptalo a tu implementación. Esta estructura cubre 1:1 lo que evalúa la rúbrica:
+
+
+
+mi-api-agente/
+├── app/
+│   ├── main.py            # FastAPI: POST /tasks → encola y devuelve job_id · GET /tasks/{id} → estado (no bloquea)
+│   ├── graph.py           # tu orquestador multi-agente del M6 + checkpointer de Redis (RedisSaver)
+│   ├── worker.py          # corre la tarea en segundo plano y actualiza estado en Redis (PENDING/RUNNING/FAILED/DONE)
+│   ├── observability.py   # init de Arize Phoenix o LangSmith (decoradores de trazas)
+│   └── hitl.py            # nodo de aprobación humana: interrupt + endpoint POST /tasks/{id}/approve
+├── requirements.txt
+├── docker-compose.yml     # (opcional) app + redis
+├── .env.example           # REDIS_URL y claves (sin secretos reales)
+├── screenshots/           # capturas del dashboard de trazas (evidencia de observabilidad)
+└── README.md              # cómo levantar Redis + la API y cómo probar las 5 peticiones concurrentes
+✅ Checklist de entrega (revisá antes de subir)
+ Endpoint asíncrono que encola y devuelve un job_id sin bloquear el event loop. (→ Orquestación Asíncrona y API, 30%)
+ Estado del job persistido en Redis, incluyendo el paso a FAILED ante una excepción. (→ Persistencia con Redis, 25%)
+ Trazas visibles en el dashboard (Phoenix/LangSmith), con captura en /screenshots. (→ Observabilidad, 25%)
+ Capturas del costo por ejecución y la latencia p95 de las 5 peticiones concurrentes, en /screenshots. (→ Observabilidad, 25%)
+ Nodo Human-in-the-loop que pausa la ejecución hasta recibir aprobación externa. (→ HITL, 15%)
+ README con los pasos para inicializar Redis y la API, cómo lanzar las 5 peticiones concurrentes, y requirements.txt. (→ Documentación y estructura, 5%)
+ Repo público: probá un git clone en limpio antes de entregar.
+Repositorio de GitHub con el código de la API, archivo de requerimientos, configuración de Docker Compose (opcional pero recomendado) y capturas de pantalla del dashboard de observabilidad con trazas activas.
+Entregable
+
+Crea una estructura de proyecto Python 3.12+.
+Implementa tu sistema multi-agente del Módulo 6 dentro de un orquestador que use Redis como almacenamiento de estado.
+Desarrolla la API con FastAPI utilizando los endpoints asíncronos mencionados en el briefing.
+Configura Arize Phoenix o LangSmith para capturar trazas de cada nodo del agente.
+Implementa un nodo de 'Aprobación Humana' que detenga la ejecución del grafo hasta recibir un input externo.
+Sube el código a un repositorio y documenta en el README cómo inicializar Redis y la API.

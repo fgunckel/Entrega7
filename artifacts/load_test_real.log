@@ -1,0 +1,26 @@
+Lanzando 5 peticiones concurrentes contra http://127.0.0.1:8000 ...
+
+Resultados:
+  [OK ] #1 a604a123…  7.31s  
+  [OK ] #2 ae114d19…  5.12s  
+  [OK ] #3 46083bcf…  3.07s  
+  [OK ] #4 a11b2490…  9.16s  
+  [OK ] #5 57a47a25…  12.2s  
+
+jobs DONE      : 5/5
+latencia media : 7.37 s
+latencia p95   : 11.59 s  (interpolación lineal, n=5)
+latencia max   : 12.20 s
+latencia global: 12.37 s
+
+Costo por ejecución (tokens reportados por el proveedor):
+  #1: $0.000396  [1632 tokens: 1380 in / 252 out, modelo openai/gpt-oss-120b]
+  #2: $0.000390  [1624 tokens: 1380 in / 244 out, modelo openai/gpt-oss-120b]
+  #3: $0.000398  [1635 tokens: 1380 in / 255 out, modelo openai/gpt-oss-120b]
+  #4: $0.000397  [1633 tokens: 1380 in / 253 out, modelo openai/gpt-oss-120b]
+  #5: $0.000391  [1625 tokens: 1380 in / 245 out, modelo openai/gpt-oss-120b]
+  TOTAL estimado: $0.001972
+
+Nota: costo estimado con tarifas configurables (ADA_MODEL_RATES); Phoenix calcula el costo automáticamente solo para modelos soportados.
+Verificar en Phoenix (http://localhost:6006) que las 5 ejecuciones
+aparecen como sesiones separadas con sus trazas completas.

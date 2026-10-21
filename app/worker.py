@@ -142,7 +142,19 @@ def build_job_store(redis_client) -> JobStore:
 
 
 def _build_chat_model():
-    """Create the Groq chat model from environment settings."""
+    """Create the chat model from environment settings.
+
+    With ADA_LLM_FAKE=1 returns a deterministic fake model (no network,
+    no Groq tokens): useful to validate the full pipeline locally before
+    spending real provider quota.
+    """
+    import os
+
+    if os.getenv("ADA_LLM_FAKE", "").strip() in ("1", "true"):
+        from app.fake_model import FakeChatModel
+
+        return FakeChatModel()
+
     from langchain_groq import ChatGroq
 
     from ada.config import get_settings
@@ -191,6 +203,7 @@ def _run_graph_sync(graph, initial_state: dict, config: dict, recorder) -> dict:
                 final_state["__interrupt__"] = update
             elif isinstance(update, dict):
                 final_state = {**final_state, **update}
+            _trace_node_span(node, update)
             for message in _iter_messages(update):
                 if getattr(message, "usage_metadata", None):
                     recorder.add(message.usage_metadata)
@@ -210,10 +223,33 @@ def _resume_graph_sync(graph, resume_value: dict, config: dict, recorder) -> dic
                 final_state["__interrupt__"] = update
             elif isinstance(update, dict):
                 final_state = {**final_state, **update}
+            _trace_node_span(node, update)
             for message in _iter_messages(update):
                 if getattr(message, "usage_metadata", None):
                     recorder.add(message.usage_metadata)
     return final_state
+
+
+def _trace_node_span(node: str, update: Any) -> None:
+    """Emit an OTel span for a graph node update.
+
+    With the real LLM the LangChain instrumentor already emits spans; this
+    adds a deterministic per-node span so Phoenix shows the full trace
+    even in ADA_LLM_FAKE mode (no LangChain calls to instrument).
+    """
+    try:
+        from opentelemetry import trace
+
+        tracer = trace.get_tracer("ada.worker")
+        with tracer.start_as_current_span(f"ada.node.{node}") as span:
+            if isinstance(update, dict):
+                for key in ("next_agent", "decision", "final_report"):
+                    if key in update:
+                        span.set_attribute(
+                            f"ada.{node}.{key}", str(update[key])[:200]
+                        )
+    except Exception:  # pragma: no cover - telemetry must never break a job
+        logger.debug("node span failed (telemetry off?)", exc_info=True)
 
 
 def _iter_messages(update: Any):
@@ -418,3 +454,8 @@ async def make_store() -> JobStore:
         url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
         client = redis.from_url(url, decode_responses=True)
     return JobStore(client)
+
+
+if __name__ == "__main__":
+    # python -m app.worker: entrypoint directo del worker.
+    asyncio.run(run_worker())

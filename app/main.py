@@ -162,11 +162,12 @@ async def approve_task(job_id: str, payload: ApprovalRequest) -> TaskCreated:
     data = await store.get_job(job_id)
     if not data:
         raise HTTPException(status_code=404, detail="job not found")
-    # Transición atómica WAITING_APPROVAL -> RESUME_QUEUED con Lua:
-    # verifica el estado y reserva la aprobación en un solo paso, sin
-    # carrera entre el GET y la escritura. Solo la primera llamada con el
-    # job en WAITING_APPROVAL gana; el resto recibe 409 (doble aprobación
-    # o aprobación prematura) y el grafo no se reanuda dos veces.
+    # Transición atómica WAITING_APPROVAL -> RESUME_QUEUED con optimistic
+    # locking (WATCH/MULTI/EXEC): verifica el estado y reserva la
+    # aprobación en un solo paso, sin carrera entre el GET y la escritura.
+    # Solo la primera llamada con el job en WAITING_APPROVAL gana; el resto
+    # recibe 409 (doble aprobación o aprobación prematura) y el grafo no
+    # se reanuda dos veces.
     claimed = await store.claim_resume(job_id, WAITING_APPROVAL)
     if not claimed:
         raise HTTPException(status_code=409, detail="job is not awaiting approval")

@@ -58,8 +58,15 @@ def _fallback_route(reason: str) -> dict:
     ).model_dump()
 
 
-def route_next_agent(state: dict, chat_model) -> RoutingDecision:
-    """Ask the model for the next agent and validate the structured output."""
+def route_next_agent(
+    state: dict, chat_model, response_holder: dict | None = None
+) -> RoutingDecision:
+    """Ask the model for the next agent and validate the structured output.
+
+    Si se pasa `response_holder` (dict), se llena con la respuesta cruda del
+    modelo para que el nodo pueda agregarla al estado (MessagesState) y el
+    worker acumule el uso de tokens (usage_metadata).
+    """
     settings = get_settings()
 
     messages = [
@@ -73,6 +80,8 @@ def route_next_agent(state: dict, chat_model) -> RoutingDecision:
 
     try:
         response = chat_model.invoke(messages)
+        if response_holder is not None:
+            response_holder["message"] = response
     except Exception as error:
         return RoutingDecision(
             next_agent="limited_finish",

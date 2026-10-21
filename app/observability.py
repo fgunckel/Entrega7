@@ -51,7 +51,9 @@ def init_observability() -> bool:
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-        provider = TracerProvider(resource=Resource({"project.name": project}))
+        provider = TracerProvider(
+            resource=Resource({"openinference.project.name": project})
+        )
         provider.add_span_processor(
             BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint))
         )

@@ -16,10 +16,19 @@ contra servicios activos.
 
 ## Estado actual
 
-- [ ] `traza_completa.png` — pendiente (requiere Phoenix activo + GROQ_API_KEY)
-- [ ] `cinco_concurrentes.png` — pendiente
-- [ ] `latencia_p95.png` — pendiente
-- [ ] `costo_tokens.png` — pendiente
+- [x] `traza_completa.png` — capturada (job real con Groq: LangGraph → hitl_approval → supervisor → ChatGroq → researcher → analyst → validator → synthesizer)
+- [x] `cinco_concurrentes.png` — capturada (5 traces LangGraph consecutivos de la prueba de carga, con tokens y costo por ejecución)
+- [x] `latencia_p95.png` — capturada (vista Metrics: Trace latency con percentiles)
+- [x] `latencia_p95_1.png` — capturada (vista Metrics alternativa: percentiles P50–P99.9, Cost y Token usage)
+- [x] `costo_tokens.png` — capturada (tokens `llm.token_count.*` y costo del span LLM)
+
+## Capturas complementarias
+
+| Archivo | Contenido |
+|---------|-----------|
+| `traza_output_final.png` | Span raíz `LangGraph` con el output final del job (informe de decisión) |
+| `spans_general.png` | Vista Spans del proyecto con métricas agregadas (Total Traces, Total Cost, Latency P50/P99) |
+| `traces_listado.png` | Listado de traces del proyecto |
 
 ## Procedimiento para capturar
 

@@ -38,7 +38,13 @@ def get_checkpointer():
 
         fake_redis = os.getenv("ADA_USE_FAKEREDIS", "").strip() in ("1", "true")
         redis_url = os.getenv("REDIS_URL", "").strip()
-        if redis_url and not fake_redis:
+        # Override explícito: ADA_CHECKPOINTER=memory fuerza MemorySaver
+        # (solo pruebas locales sin Redis Stack; los checkpoints viven
+        # mientras vive el proceso worker y no hay persistencia real).
+        force_memory = (
+            os.getenv("ADA_CHECKPOINTER", "").strip().lower() == "memory"
+        )
+        if redis_url and not fake_redis and not force_memory:
             checkpointer = build_checkpointer()
             if checkpointer is None:
                 # Redis configurado pero no inicializable: no ejecutar el
@@ -52,7 +58,13 @@ def get_checkpointer():
         else:
             from langgraph.checkpoint.memory import MemorySaver
 
-            logger.warning("REDIS_URL no configurado: usando MemorySaver en memoria")
+            if force_memory:
+                logger.warning(
+                    "ADA_CHECKPOINTER=memory: usando MemorySaver en memoria "
+                    "(override explícito; los checkpoints no persisten)"
+                )
+            else:
+                logger.warning("REDIS_URL no configurado: usando MemorySaver en memoria")
             _shared_checkpointer = MemorySaver()
     return _shared_checkpointer
 

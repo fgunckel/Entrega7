@@ -45,8 +45,13 @@ def make_supervisor_node(chat_model) -> Worker:
     """Create the supervisor node backed by a chat model (real or fake)."""
 
     def supervisor_node(state: dict) -> dict:
-        decision: RoutingDecision = route_next_agent(state, chat_model)
+        response_holder: dict = {"message": None}
+        decision: RoutingDecision = route_next_agent(state, chat_model, response_holder)
+        # La respuesta del LLM se agrega al estado (MessagesState) para que
+        # el worker pueda acumular el uso de tokens reportado por el
+        # proveedor (usage_metadata) y Phoenix la trace.
         return {
+            "messages": [response_holder["message"]] if response_holder["message"] else [],
             "next_agent": decision.next_agent,
             "routing_reason": decision.reason,
             "task_completed": decision.task_completed,
