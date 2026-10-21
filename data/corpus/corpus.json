@@ -1,0 +1,68 @@
+{
+  "documents": [
+    {
+      "document_id": "doc-modular-monolith-01",
+      "title": "Modular Monolith: a primer",
+      "content": "Un monolito modular es un sistema desplegado como una única aplicación cuyo código interno se organiza en módulos con límites explícitos. Cada módulo encapsula una capacidad de negocio y se comunica con los demás mediante contratos públicos. Esta estructura retrasa la necesidad de distribuir el sistema, reduce el costo operativo inicial y facilita una futura extracción de servicios si los módulos mantienen bajo acoplamiento. Es una opción recomendada como punto de partida para equipos pequeños o medianos.",
+      "source": "https://www.kamilgrzybek.com/design/modular-monolith-primer/",
+      "topic": "arquitectura",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-modular-monolith-2",
+      "title": "Modular Monolith: enforcing module boundaries",
+      "content": "Para que un monolito modular funcione, los límites entre módulos deben hacerse cumplir: un módulo no debe acceder directamente a las tablas ni a las clases internas de otro. Se pueden usar módulos con APIs públicas explícitas, contratos internos y herramientas de análisis estático para detectar violaciones. Los despliegues siguen siendo unitarios: todo el sistema se despliega junto, lo que simplifica la operación pero acopla los ciclos de release de todos los módulos.",
+      "source": "https://www.kamilgrzybek.com/design/modular-monolith-primer/",
+      "topic": "arquitectura",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-microservices-1",
+      "title": "Pattern: Microservice Architecture",
+      "content": "La arquitectura de microservicios estructura la aplicación como un conjunto de servicios desplegables de forma independiente, organizados en torno a capacidades de negocio. Habilita despliegues independientes, escalado selectivo y equipos autónomos, a cambio de una mayor complejidad operativa: red entre servicios, consistencia eventual, observabilidad distribuida y gestión de versiones de contratos. Es más adecuada para organizaciones con muchos equipos y necesidades reales de despliegue independiente.",
+      "source": "https://microservices.io/patterns/microservices.html",
+      "topic": "arquitectura",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-microservices-tradeoffs",
+      "title": "Monolith first",
+      "content": "Martin Fowler advierte que empezar directamente con microservicios suele ser prematuro: la mayoría de los sistemas que migran a microservicios lo hacen tras crecer más allá de un monolito, y los equipos pequeños que adoptan microservicios desde el inicio pagan costos de complejidad operativa sin obtener aún sus beneficios. La recomendación práctica es construir un monolito bien modularizado y extraer microservicios solo cuando existan necesidades concretas de escalado o despliegue independiente.",
+      "source": "https://martinfowler.com/bliki/MonolithFirst.html",
+      "topic": "trade-offs",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-ddd-strategic",
+      "title": "Domain-Driven Design: strategic design",
+      "content": "El Domain-Driven Design propone delimitar el dominio mediante bounded contexts: fronteras explícitas dentro de las cuales un modelo del dominio es consistente. Los contextos se relacionan mediante context maps con patrones como shared kernel, anticorruption layer o customer-supplier. Estos límites son la base natural para dividir módulos en un monolito modular o servicios en una arquitectura distribuida, y reducen el acoplamiento entre equipos.",
+      "source": "https://www.domainlanguage.com/ddd/",
+      "topic": "diseño",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-cqrs-overview",
+      "title": "CQRS (Command Query Responsibility Segregation)",
+      "content": "CQRS separa los modelos de escritura y lectura de una aplicación, permitiendo optimizar cada lado por separado. Es útil cuando hay asimetría fuerte entre lecturas y escrituras o modelos de dominio complejos, pero añade complejidad: sincronización de vistas, consistencia eventual y más piezas que mantener. En sistemas simples suele ser una complejidad innecesaria; conviene aplicarlo solo en contextos concretos con demanda justificada.",
+      "source": "https://martinfowler.com/bliki/CQRS.html",
+      "topic": "diseño",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-operational-tradeoffs",
+      "title": "Microservice Trade-Offs",
+      "content": "Adoptar microservicios implica aceptar costos operativos: despliegue de múltiples servicios, gestión de datos distribuidos, tolerancia a fallos de red, versionado de contratos y trazabilidad distribuida. Un monolito modular reduce la carga operativa (un solo despliegue, transacciones locales, debugging más simple) a costa de acoplar los despliegues. La decisión depende del tamaño del equipo, la madurez de la plataforma de despliegue y la necesidad real de independencia entre componentes.",
+      "source": "https://www.martinfowler.com/articles/microservice-tradeoffs.html",
+      "topic": "operación",
+      "language": "es"
+    },
+    {
+      "document_id": "doc-team-scaling",
+      "title": "Team Topologies and architecture alignment",
+      "content": "La arquitectura debe reflejar la estructura del equipo: con un equipo pequeño, un sistema modular único maximiza el flujo de trabajo; con muchos equipos independientes, límites de servicio alineados a los equipos reducen la coordinación. La regla práctica es que la arquitectura debe minimizar la fricción de comunicación: dividir en servicios solo cuando el número de equipos lo justifica y existe madurez de despliegue continuo.",
+      "source": "https://teamtopologies.com/key-concepts",
+      "topic": "organización",
+      "language": "es"
+    }
+  ]
+}

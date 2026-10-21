@@ -1,0 +1,77 @@
+=== ADA - LOG DE DIAGNÓSTICO REPRODUCIBLE ===
+Fecha: 2026-10-14T16:38:13+00:00
+Consulta: Necesito decidir cómo implementar la comunicación entre microservicios en una arquitectura .NET desplegada en Azure. Compará Azure Service Bus y la comunicación HTTP síncrona, evaluando acoplamiento, resiliencia, latencia, complejidad operativa y escalabilidad. Justificá la recomendación con evidencia del corpus local e indicá los trade-offs y los casos en los que elegirías cada alternativa.
+Modelo: mock determinístico (no depende de Groq ni de red)
+Pruebas de integración real con Groq: NO EJECUTADAS (GROQ_API_KEY no configurada en este entorno). Todas las pruebas de este log usan mocks determinísticos.
+Corpus: data/corpus/corpus.json (8 documentos reales)
+
+### A. Extracción de la decisión (extract_decision)
+  Esperado : 2 alternativas (azure-service-bus, sync-http) y 5 criterios
+  decision_question: Necesito decidir cómo implementar la comunicación entre micr...
+  alternatives_are_explicit: True
+  alternativas extraídas: ['azure-service-bus', 'sync-http']
+  criterios extraídos: ['coupling', 'resilience', 'latency', 'operational-cost', 'scalability']
+  ESTADO: PASS
+
+### B. Inicialización del estado
+  Esperado : criteria con los 5 Criterion extraídos, pesos que suman 1
+    criterion coupling: weight=0.235294 name='Acoplamiento'
+    criterion resilience: weight=0.235294 name='Resiliencia'
+    criterion latency: weight=0.176471 name='Latencia'
+    criterion operational-cost: weight=0.176471 name='Complejidad operativa'
+    criterion scalability: weight=0.17647 name='Escalabilidad'
+  suma de pesos: 1.000000
+  ESTADO: PASS
+
+### C. Ejecución de cada nodo (grafo completo con mock)
+  Esperado : Supervisor enruta; Researcher recupera; Analyst usa criteria del estado; Validator valida; informe solo con validación vigente
+  supervisor: escribe ['next_agent', 'routing_reason', 'steps', 'task_completed']
+  researcher: escribe ['contributions', 'final_report', 'research_artifact', 'validation_errors', 'validation_result']
+  analyst: escribe ['analysis_artifact', 'contributions', 'final_report', 'validation_errors', 'validation_result']
+  validator: escribe ['contributions', 'retries', 'validation_errors', 'validation_result']
+  limited_finish: escribe ['final_report', 'task_completed']
+  secuencia de nodos ejecutados: ['researcher', 'analyst', 'validator', 'researcher', 'validator', 'researcher', 'validator']
+  Analyst: alternativas producidas ['azure-service-bus', 'sync-http']
+  Validator is_valid: False, errores: ['No retrieved evidence mentions any requested alternative; the comparison would rely on irrelevant context.']
+  final_report.status: limited
+  ESTADO: PASS
+
+### D. Scoring (valores por criterio, pesos, puntuaciones y ranking)
+  Esperado : puntajes que reflejan las señales del caso recibido; sin diferencias inventadas cuando los datos son idénticos; ranking determinístico
+  alternativa azure-service-bus: weighted_score=0.564706
+      coupling: score=2 (weight=0.235294) -> señal detectada
+      resilience: score=4 (weight=0.235294) -> señal detectada
+      latency: score=2 (weight=0.176471) -> señal detectada
+      operational-cost: score=3 (weight=0.176471) -> sin señales diferenciadoras en el texto: neutro honesto
+      scalability: score=3 (weight=0.17647) -> sin señales diferenciadoras en el texto: neutro honesto
+  alternativa sync-http: weighted_score=0.564706
+      coupling: score=2 (weight=0.235294) -> señal detectada
+      resilience: score=4 (weight=0.235294) -> señal detectada
+      latency: score=2 (weight=0.176471) -> señal detectada
+      operational-cost: score=3 (weight=0.176471) -> sin señales diferenciadoras en el texto: neutro honesto
+      scalability: score=3 (weight=0.17647) -> sin señales diferenciadoras en el texto: neutro honesto
+  ranking: ['azure-service-bus', 'sync-http']
+  ESTADO: PASS
+
+### E. Evidencia recuperada y respaldo por criterio
+  Esperado : IDs y títulos reales del corpus; criterios sin respaldo explícitos; sin atribuir contenido no presente
+  evidencia recuperada: 5 ítems
+    [doc-microservices-tradeoffs] Monolith first
+    [doc-operational-tradeoffs] Microservice Trade-Offs
+    [doc-team-scaling] Team Topologies and architecture alignment
+    [doc-modular-monolith-01] Modular Monolith: a primer
+    [doc-microservices-1] Pattern: Microservice Architecture
+  criterios con respaldo léxico: ['coupling', 'independent-deploys', 'operational-cost', 'resilience', 'team-alignment']
+  criterios SIN respaldo suficiente: ['latency', 'scalability']
+  ESTADO: PASS
+
+### F. Validación y finalización (Validator + Synthesizer)
+  Esperado : Validator valida los artefactos; el informe solo se sintetiza con validación vigente; sin recomendación si no hay evidencia suficiente
+  is_valid: False
+  errores: ['No retrieved evidence mentions any requested alternative; the comparison would rely on irrelevant context.']
+  warnings: []
+  final_report.status: limited
+  recommendation: No se emite recomendación definitiva.
+  ESTADO: PASS
+
+=== FIN DEL LOG DE DIAGNÓSTICO ===

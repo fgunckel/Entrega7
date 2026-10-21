@@ -1,0 +1,55 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis-data:/data
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"   # UI + OTLP collector
+    volumes:
+      - phoenix-data:/mnt/data
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      PHOENIX_COLLECTOR_ENDPOINT: http://phoenix:6006/v1/traces
+      PHOENIX_PROJECT_NAME: ada-api
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      ADA_HITL_COST_THRESHOLD: ${ADA_HITL_COST_THRESHOLD:-0.50}
+    depends_on:
+      redis:
+        condition: service_healthy
+      phoenix:
+        condition: service_started
+    # La API solo encola; el grafo lo ejecuta el servicio worker.
+
+  worker:
+    build: .
+    command: ["python", "-m", "app.worker"]
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      PHOENIX_COLLECTOR_ENDPOINT: http://phoenix:6006/v1/traces
+      PHOENIX_PROJECT_NAME: ada-api
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      ADA_HITL_COST_THRESHOLD: ${ADA_HITL_COST_THRESHOLD:-0.50}
+    depends_on:
+      redis:
+        condition: service_healthy
+      phoenix:
+        condition: service_started
+
+volumes:
+  redis-data:
+  phoenix-data:

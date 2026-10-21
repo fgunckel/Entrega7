@@ -1,0 +1,20 @@
+{
+  "documents": [
+    {
+      "document_id": "mini-1",
+      "title": "Monolito modular",
+      "content": "Un monolito modular organiza el código en módulos con límites claros dentro de una aplicación única.",
+      "source": "https://www.kamilgrzybek.com/design/modular-monolith-primer/",
+      "topic": "arquitectura",
+      "language": "es"
+    },
+    {
+      "document_id": "mini-2",
+      "title": "Microservicios",
+      "content": "Los microservicios separan capacidades de negocio en servicios independientes.",
+      "source": "https://microservices.io/patterns/microservices.html",
+      "topic": "arquitectura",
+      "language": "es"
+    }
+  ]
+}
